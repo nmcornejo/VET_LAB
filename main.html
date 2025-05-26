@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterinaria - Página Principal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific styles for print */
+        @media print {
+            body > *:not(.print-area) {
+                display: none !important;
+            }
+            .print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 20px;
+                background: white;
+                color: black;
+                font-size: 12pt;
+            }
+            .print-area img {
+                max-width: 150px;
+                height: auto;
+                display: block;
+                margin-bottom: 20px;
+            }
+            .print-area h1, .print-area h2, .print-area h3 {
+                color: #0d6efd; /* Bootstrap primary color for headings */
+            }
+            .print-area p {
+                margin-bottom: 5px;
+            }
+            .print-area .info-box {
+                border: 1px solid #ccc;
+                padding: 15px;
+                margin-top: 20px;
+                border-radius: 5px;
+                background-color: #f8f9fa;
+            }
+            .print-area .text-center {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">VetApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="citaMedica-tab" data-bs-toggle="pill" href="#citaMedica" role="tab" aria-controls="citaMedica" aria-selected="true">Cita Médica</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="reportes-tab" data-bs-toggle="pill" href="#reportes" role="tab" aria-controls="reportes" aria-selected="false">Reportes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="misDatos-tab" data-bs-toggle="pill" href="#misDatos" role="tab" aria-controls="misDatos" aria-selected="false">Ver mis datos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="enhancements-tab" data-bs-toggle="pill" href="#enhancements" role="tab" aria-controls="enhancements" aria-selected="false">Mejoras Clave</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light ms-2" id="logoutButton">Cerrar Sesión</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active p-3" id="citaMedica" role="tabpanel" aria-labelledby="citaMedica-tab">
+                <h2 class="mb-4">Agendar Cita Médica</h2>
+                <div class="card shadow-sm p-4">
+                    <form id="appointmentForm">
+                        <div class="mb-3">
+                            <label for="ownerName" class="form-label">Nombre del Dueño</label>
+                            <input type="text" class="form-control" id="ownerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="petName" class="form-label">Nombre de la Mascota</label>
+                            <input type="text" class="form-control" id="petName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vetName" class="form-label">Médico Veterinario</label>
+                            <select class="form-select" id="vetName" required>
+                                <option value="" selected disabled>Seleccione un veterinario</option>
+                                <option value="Dr. Ana Gómez">Dr. Ana Gómez</option>
+                                <option value="Dr. Carlos Ruiz">Dr. Carlos Ruiz</option>
+                                <option value="Dra. Laura Pérez">Dra. Laura Pérez</option>
+                                <option value="Dr. Miguel Castro">Dr. Miguel Castro</option>
+                                <option value="Dra. Sofía Vargas">Dra. Sofía Vargas</option>
+                            </select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="appointmentDate" class="form-label">Fecha de la Cita</label>
+                                <input type="date" class="form-control" id="appointmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="appointmentTime" class="form-label">Hora de la Cita</label>
+                                <input type="time" class="form-control" id="appointmentTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="symptoms" class="form-label">Síntomas Observados</label>
+                            <textarea class="form-control" id="symptoms" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Confirmar Cita</button>
+                    </form>
+                    <div id="appointmentConfirmation" class="mt-4 p-3 border rounded" style="display:none;">
+                        <h5>Cita Confirmada</h5>
+                        <p><strong>Dueño:</strong> <span id="confOwnerName"></span></p>
+                        <p><strong>Mascota:</strong> <span id="confPetName"></span></p>
+                        <p><strong>Veterinario:</strong> <span id="confVetName"></span></p>
+                        <p><strong>Fecha:</strong> <span id="confAppointmentDate"></span></p>
+                        <p><strong>Hora:</strong> <span id="confAppointmentTime"></span></p>
+                        <p><strong>Síntomas:</strong> <span id="confSymptoms"></span></p>
+                        <p class="alert alert-info mt-3">
+                            Se ha enviado un correo simulado a su dirección.
+                            <br>Cita confirmada. Su número de ficha es: <strong id="fichaNumber"></strong>, el día <strong id="mailDate"></strong> a las <strong id="mailTime"></strong>. Su veterinario asignado es: <strong id="mailVetName"></strong>.
+                        </p>
+                        <button class="btn btn-secondary mt-3" id="printAppointmentBtn"><i class="bi bi-printer"></i> Imprimir Cita (PDF)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-3" id="reportes" role="tabpanel" aria-labelledby="reportes-tab">
+                <h2 class="mb-4">Agenda de Citas (Todas las Citas)</h2>
+                <div id="appointmentsReport" class="row">
+                    <p class="alert alert-info" id="noReportsMessage" style="display: none;">No hay citas registradas aún.</p>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-3" id="misDatos" role="tabpanel" aria-labelledby="misDatos-tab">
+                <h2 class="mb-4">Mi Perfil</h2>
+                <div class="card shadow-sm p-4">
+                    <div class="text-center mb-4">
+                        <img id="profilePic" src="https://via.placeholder.com/150/007bff/FFFFFF?text=Tu+Foto" alt="Foto de Perfil" class="rounded-circle mb-3 border border-3 border-primary" style="width: 150px; height: 150px; object-fit: cover;">
+                        <input type="file" id="profilePicUpload" class="form-control d-none">
+                        <button class="btn btn-outline-primary btn-sm mt-2" id="changeProfilePicBtn">Cambiar Foto</button>
+                    </div>
+
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label for="profileUsername" class="form-label">Nombre de Usuario</label>
+                            <input type="text" class="form-control" id="profileUsername" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileEmail" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="profileEmail" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileOwnerName" class="form-label">Tu Nombre de Dueño (editable)</label>
+                            <input type="text" class="form-control" id="profileOwnerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileUsualVet" class="form-label">Tu Veterinario Usal (editable)</label>
+                            <select class="form-select" id="profileUsualVet">
+                                <option value="">No Asignado</option>
+                                <option value="Dr. Ana Gómez">Dr. Ana Gómez</option>
+                                <option value="Dr. Carlos Ruiz">Dr. Carlos Ruiz</option>
+                                <option value="Dra. Laura Pérez">Dra. Laura Pérez</option>
+                                <option value="Dr. Miguel Castro">Dr. Miguel Castro</option>
+                                <option value="Dra. Sofía Vargas">Dra. Sofía Vargas</option>
+                            </select>
+                        </div>
+
+                        <h5 class="mt-4">Mis Mascotas <button type="button" class="btn btn-sm btn-success ms-2" id="addPetBtn"><i class="bi bi-plus-circle"></i> Añadir Mascota</button></h5>
+                        <div id="petsContainer" class="row">
+                            <p class="text-muted" id="noPetsMessage">No has agregado mascotas aún.</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numCachorros" class="form-label">Cantidad de Mascotas (basado en agregadas)</label>
+                            <input type="text" class="form-control" id="numCachorros" disabled> </div>
+                        <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+                        <div id="profileMessage" class="mt-3"></div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-3" id="enhancements" role="tabpanel" aria-labelledby="enhancements-tab">
+                <h2 class="mb-4">Mejoras Clave Implementadas</h2>
+                <div class="card shadow-sm p-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Recuperación de Contraseña Completa:** Permite restablecer contraseña con validación estricta y feedback en tiempo real.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Validación de Contraseña Mínimo 8 Caracteres:** Contraseñas robustas con requisitos de mayúscula, número y símbolo.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Selección de Médico Veterinario:** Campo dedicado para elegir al profesional en la agenda de citas.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Reportes de Citas Tipo Agenda:** Muestra todas las citas agendadas, incluyendo las de otros usuarios (simuladas).
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Perfil de Usuario Detallado ("Ver mis datos"):**
+                            <ul>
+                                <li>Nombre de dueño editable.</li>
+                                <li>Veterinario usual preferido.</li>
+                                <li>Gestión de Mascotas (añadir/eliminar) con foto (simulada).</li>
+                                <li>Carga de foto de perfil.</li>
+                                <li>Conteo automático de mascotas.</li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Generación de Cita en PDF (Imprimir):** Permite imprimir la confirmación de la cita con logo y detalles.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            **Mensaje de Agradecimiento al Cerrar Sesión:** Mejora la experiencia de usuario con un mensaje de despedida.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="printAppointmentArea" class="print-area" style="display:none;">
+        <div class="text-center mb-4">
+            <img src="https://via.placeholder.com/150x100/007bff/FFFFFF?text=VetApp+Logo" alt="VetApp Logo" class="mb-3">
+            <h1>Confirmación de Cita Veterinaria</h1>
+            <p>¡Gracias por confiar en VetApp!</p>
+        </div>
+        <hr>
+        <div class="info-box">
+            <h2>Detalles de la Cita</h2>
+            <p><strong>Número de Ficha:</strong> <span id="printFichaNumber"></span></p>
+            <p><strong>Fecha de Cita:</strong> <span id="printAppointmentDate"></span></p>
+            <p><strong>Hora de Cita:</strong> <span id="printAppointmentTime"></span></p>
+            <p><strong>Médico Veterinario:</strong> <span id="printVetName"></span></p>
+        </div>
+        <div class="info-box mt-3">
+            <h2>Información del Paciente</h2>
+            <p><strong>Dueño:</strong> <span id="printOwnerName"></span></p>
+            <p><strong>Mascota:</strong> <span id="printPetName"></span></p>
+            <p><strong>Síntomas Observados:</strong> <span id="printSymptoms"></span></p>
+        </div>
+        <p class="mt-4 text-center">Por favor, guarde este documento para su registro.</p>
+        <p class="text-center small">© 2025 VetApp. Todos los derechos reservados.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
